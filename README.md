@@ -174,7 +174,7 @@ List of clinic medicines.
 
 ---
 
-##📚 Learning Outcomes
+## 📚 Learning Outcomes
 
 1. Built a fully normalized relational database (3NF)
 
@@ -190,9 +190,8 @@ List of clinic medicines.
 
 ---
 
-##🐾 Summary
+## 🐾 Summary
 
 This database system provides a clean, scalable structure for clinic operations, supporting efficient pet medical tracking, doctor management, and diagnosis recording.
 It is suitable for extension into a full application, integrating UI, backend systems, or analytics dashboards.
-## 🔗 Functional Dependencies  
 
