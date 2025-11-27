@@ -1,0 +1,226 @@
+create table Branch 
+(
+  Branch_num number(10) not null,
+  Address varchar2(20) ,
+  B_name varchar2(10) not null,
+
+  Primary key(Branch_num)
+);
+
+create table Employees(
+    E_name varchar2(15) not null,
+    E_id varchar(2) primary key,
+    E_phone varchar(10) not null,
+    E_type varchar2(15) not null check( E_type in('doctor','other_employee')),
+    salary number(6) check(salary>1000),
+    branch_num number(10),
+    constraint fk_b foreign key (branch_num) references branch(Branch_num)
+); 
+
+create table Doctor (
+E_id varchar(2) primary key,
+Specialty varchar2(20),
+CONSTRAINT fk_e FOREIGN KEY (E_id) REFERENCES Employees(E_id));
+
+create table other_employee(
+E_id varchar(2) primary key,
+position varchar2(20) not null
+);
+
+alter table other_employee 
+add constraint fk_ee foreign key(E_id) references employees(E_id);
+
+create table Owner
+(
+    Phone_num number(10) not null,
+    Name varchar2(20) not null,
+    Email varchar2(40),
+    primary key(Phone_num)
+);
+
+create table Pet
+(
+    Pet_id number(10) not null,
+    Phone_num number(10) not null,
+    Name varchar2(20) not null,
+    DOB date,
+    Type varchar2(20),
+    sex varchar2(10),
+    Fur_color varchar2(15),
+     primary key(Pet_id),
+    foreign key (Phone_num) references Owner(Phone_num)
+);
+create table Diganosis(
+Pet_id number(10) not null,
+E_id varchar (2) not null,
+dignosis_id number (10) not null,
+date_d date,
+Illness varchar2(20), 
+Primary key(dignosis_id),
+foreign key(Pet_id) references Pet(Pet_id),
+foreign key(E_id) references Employees (E_id)
+);
+ 
+ create table Pet_treatment (
+dignosis_id number (10) not null,
+Name_diagnosis varchar2 (20) not null,
+Dose varchar2(20),
+Primary key(Name_diagnosis,dignosis_id),
+
+foreign key (dignosis_id) references Diganosis(dignosis_id) 
+);
+
+insert into Branch
+values(10012,'1355 S Hines Blvd','Elite vet');
+insert into Branch
+values(20012,'15145 S.W. 17th St.','Elite vet');
+insert into Branch
+values(30012,'4132 Main Street','Elite vet');
+insert into Branch
+values(40012,'1764 S Bines Blvd','Elite vet');
+insert into Branch
+values(50012,'16156 H.E. 18th St.','Elite vet');
+
+
+insert into employees values('Ahmed','01','0508977922','doctor', 150000, 10012);
+insert into employees values('Hana','02','0508657788','doctor', 155000, 20012);
+insert into employees values('Muhammed','03','0563447523','doctor', 17000, 20012);
+insert into employees values('Osama','04','0504334677','doctor', 175000, 30012);
+insert into employees values('Nora','05','0563310378','doctor', 18000, 30012);
+insert into employees values('Sara','06','0569983012','other_employee',80000, 40012);
+insert into employees values('Alaa','07','0531254608','other_employee', 90000, 40012);
+insert into employees values('Adnan','08','0542378991','other_employee', 100000, 50012);
+insert into employees values('Hind','09','0532275462','other_employee', 65000, 50012);
+insert into employees values('Dala','10','0542563002','other_employee', 68000, 10012);
+
+
+insert into doctor values('01','Opthalmology');
+insert into doctor values('02','Emergency doctor');
+insert into doctor values('03','Dentistry');
+insert into doctor values('04','Internal medicine');
+insert into doctor values('05','Surgery');
+
+insert into other_employee values('06','receptionist');
+insert into other_employee values('07','vet tech');
+insert into other_employee values('08','manager');
+insert into other_employee values('09','sales person');
+insert into other_employee values('10','customer service');
+
+insert into Owner values(0553933641,'Bylsan','bylsan@gmail.com');
+insert into Owner values(0505492048,'Noura',null);
+insert into Owner values(0555123456,'ahmed','ahmed@gmail.com');
+insert into Owner values(0505468321,'joud','joud@hotmail.com');
+insert into Owner values(0553932781,'mohammed','moe42@hotmail.com');
+
+insert into Pet values(100,0553933641,'Leo',to_date('2020-3-10', 'yyyy-mm-dd'),'Cat','Male','White');
+insert into Pet values(101,0505492048,'Elsa',to_date('2017-12-12', 'yyyy-mm-dd'),'Cat','Female','Black');
+insert into Pet values(110,0555123456,'Ozzy',to_date('2019-10-26', 'yyyy-mm-dd'),'Dog','Male','Brown');
+insert into Pet values(200,0505468321,'Phoenix',to_date('2021-11-13', 'yyyy-mm-dd'),'Cat','Female','Grey');
+insert into Pet values(201,0553932781,'Charlie',to_date('2014-06-07', 'yyyy-mm-dd'),'Dog','Female','Black');
+ 
+insert into Diganosis
+ values(101,'02',12,to_date('2011-11-11', 'yyyy-mm-dd'),'dyreallergi'); 
+ insert into Diganosis
+ values(101,'02',13,to_date('2020-3-10', 'yyyy-mm-dd'),'dyreallergi'); 
+ insert into Diganosis
+ values(110,'03',14,to_date('2002-5-11', 'yyyy-mm-dd'),'Diazitrim'); 
+ insert into Diganosis
+ values(200,'04',15,to_date('2004-4-14', 'yyyy-mm-dd'),'dyreallergi');
+ insert into Diganosis
+ values(201,'05',16,to_date('2010-3-25', 'yyyy-mm-dd'),'Diazitrim');
+
+ insert into Pet_treatment
+ values(12,'Diazitrim2','16ml');
+ insert into Pet_treatment
+ values(13,'Ceftionel2','10ml');
+ insert into Pet_treatment
+ values(14,'SAUDI1','20ml');
+ insert into Pet_treatment
+ values(15,'Ceftionel1','8ml');
+ insert into Pet_treatment
+ values(16,'SAUDI2','5ml');
+
+
+select E_name from Employees where Branch_num in(select Branch_num
+                                            from Branch
+                                            where Branch_num = '20012');
+                                            
+select pet_id from Diganosis where E_ID in (select E_id 
+                                        from employees 
+                                        where Branch_num ='20012');
+
+select name as pet_name, e_name as doctor, illness from pet p, employees e, diganosis d where p.pet_id=d.pet_id and e.e_id=d.e_id ;
+
+select illness, count(illness) from diganosis group by illness ;
+
+select e_name, e_type, salary, branch_num from employees where salary in(select max(salary ) from employees group by branch_num) order by salary;
+
+select o.name, o.phone_num, pet.name, pet.sex, pet.fur_color type from owner o 
+join Pet on o.phone_num=pet.phone_num order by o.name;
+
+select phone_num, Name from Owner where Phone_num in(select Phone_num from Pet where sex='Female');
+
+select avg(salary) as Average_Salary from employees ;
+
+select Name from owner where Phone_num =(select Phone_num from pet where Pet_id = '100' );
+
+select  Name from pet where Fur_color = 'Black'; 
+
+create or replace procedure INFO_BRANCH (P_BRANCH_NUMBER in Branch.Branch_num%type)
+as
+    v_BNAME   Branch.B_name%type;
+    v_address Branch.Address%type;
+
+begin
+    select B_name,Address
+    into v_BNAME,v_address
+    from Branch
+    where Branch_num = P_BRANCH_NUMBER ;
+    dbms_output.put_line('Branch Name :'||v_BNAME);
+    dbms_output.put_line('Branch Address :'||v_address);
+END INFO_BRANCH;
+EXEC INFO_BRANCH (10012);
+
+create or replace procedure update_salary(id_num varchar,I number)
+AS
+old_salary number;
+new_salary number;
+Begin
+select salary into old_salary
+from employees
+where E_id=id_num;
+new_salary := old_salary + I;
+Update employees
+set salary=new_salary
+where E_id=id_num;
+End update_salary;
+exec update_salary('01',200000);
+
+
+create or replace procedure petDignosis(P_dignosisId  number )
+as
+cursor PET_DIGANOSIS is 
+select  dignosis_id,date_d,Illness
+from Diganosis
+where dignosis_id = P_dignosisId ;
+begin
+for v_cursrec in PET_DIGANOSIS loop
+dbms_output.put_line(v_cursrec.dignosis_id||' '|| v_cursrec.date_d||' '||v_cursrec.Illness);
+ end loop;
+ end petDignosis;
+ exec petDignosis(13);
+/---------------------------
+create or replace procedure INFODIDANOSIS_PET(P_dignosisId number)
+as 
+v_date   Diganosis.date_d%TYPE;
+v_Illness    Diganosis.Illness%TYPE;
+begin 
+select  date_d,Illness
+into v_date ,v_Illness
+from Diganosis
+where dignosis_id = P_dignosisId ;
+ dbms_output.put_line('DIGOSIS ID : '|| P_dignosisId);
+  dbms_output.put_line('DATE : '|| v_date);
+ dbms_output.put_line('ILLNESS : '|| v_Illness);
+END ;
+exec INFODIDANOSIS_PET(13);
